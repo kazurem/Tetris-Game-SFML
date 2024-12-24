@@ -16,7 +16,7 @@ I used code from another git repository and modified it. The repository I cloned
 ![Tetris Game](./images/game-picture/image-1.png)
 
 ### How to run?
-#### 1. If you have bash then run:
+#### 1. Using bash in Linux:
 ```
 ./run.sh
 ```
