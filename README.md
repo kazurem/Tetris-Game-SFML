@@ -28,7 +28,9 @@ g++ -std=c++17 main.cpp -o tetris -lsfml-graphics -lsfml-window -lsfml-system -l
 
 #### 3. if you are on windows:
 The below command should work (i think)
+```
 g++ -std=c++17 main.cpp -o tetris -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio  && ./tetris
+```
 
 ### About SFML:
 I was on Linux so downloading SFML was fairly easy. I just ran a single command that downloaded SFML from the distribution's official repository. 
