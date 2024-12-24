@@ -327,7 +327,7 @@ int main()
 			gamespeed = 1;
 		}
 
-		window.clear(sf::Color(255, 0, 255, 1));
+		window.clear(sf::Color(0, 0, 0, 1));
 
 		// Refresh the grid-array
 		for (size_t i = 0; i < 20; i++)
