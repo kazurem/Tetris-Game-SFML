@@ -231,7 +231,7 @@ int main()
 	sf::Font font;
 
 	// Setting score properties
-	font.loadFromFile("Roboto-Black.ttf");
+	font.loadFromFile("./fonts/Roboto-Black.ttf");
 	score.setFont(font);
 	score.setCharacterSize(15);
 	score.setFillColor(sf::Color::Blue);
