@@ -252,7 +252,7 @@ int main()
 	int next_piece_section_position_y = 50;
 
 	sf::RectangleShape right_section(sf::Vector2f(400, height));
-	right_section.setFillColor(sf::Color::Blue);
+	right_section.setFillColor(sf::Color::Green);
 	right_section.setPosition(width, 0);
 
 	sf::RectangleShape next_piece_section(sf::Vector2f(next_piece_section_width, next_piece_section_width));
