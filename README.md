@@ -25,6 +25,11 @@ I used code from another git repository and modified it. The repository I cloned
 ```
 g++ -std=c++17 main.cpp -o tetris -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio  && ./tetris
 ```
+
+#### 3. if you are on windows:
+The below command should work (i think)
+g++ -std=c++17 main.cpp -o tetris -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio  && ./tetris
+
 ### About SFML:
 I was on Linux so downloading SFML was fairly easy. I just ran a single command that downloaded SFML from the distribution's official repository. 
 If you are on windows then too bad for you since I don't know how to download and setup SFML there. Just watch some youtube video.
