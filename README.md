@@ -14,3 +14,18 @@ I used code from another git repository and modified it. The repository I cloned
 
 ### Game Picture:
 ![Tetris Game](./images/game-picture/image-1.png)
+
+### How to run?
+#### 1. If you have bash then run:
+```
+./run.sh
+```
+
+#### 2. if you don't have bash:
+```
+g++ -std=c++17 main.cpp -o tetris -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio  && ./tetris
+```
+### About SFML:
+I was on Linux so downloading SFML was fairly easy. I just ran a single command that downloaded SFML from the distribution's official repository. 
+If you are on windows then you too bad for you since I don't know how to download and setup SFML there.
+
