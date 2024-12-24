@@ -13,4 +13,4 @@ I used code from another git repository and modified it. The repository I cloned
 4. Changed Forwa font to Roboto.
 
 ### Game Preview:
-![Tetris Game](image-1.png)
+![Tetris Game](./images/game-picture/image-1.png)
