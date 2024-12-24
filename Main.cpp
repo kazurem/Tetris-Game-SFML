@@ -231,12 +231,12 @@ int main()
 	sf::Font font;
 
 	// Setting score properties
-	font.loadFromFile("Forwa_font.TTF");
+	font.loadFromFile("Roboto-Black.ttf");
 	score.setFont(font);
 	score.setCharacterSize(15);
 	score.setFillColor(sf::Color::Blue);
 	score.setPosition(10, 25);
-	sf::Vector2<float> score_scale(1.5f, 1.5f);
+	sf::Vector2<float> score_scale(2.0f, 2.0f);
 	score.setScale(score_scale);
 	score.setString("Lines: 0");
 
