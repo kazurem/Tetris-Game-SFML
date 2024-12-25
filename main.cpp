@@ -107,6 +107,7 @@ void rotate(Piece &piece, PIECE_TYPE type)
 	if (type == I) // Special handling for the I piece
 	{
 		static bool vertical = false;
+		std::cout << "TRUE" << std::endl;
 
 		if (vertical)
 		{
