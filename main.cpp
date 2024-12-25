@@ -320,7 +320,7 @@ int main()
 	int right_section_width = width/1.5;
 	int right_section_height = height;
 	sf::RectangleShape right_section(sf::Vector2f(right_section_width, right_section_height));
-	right_section.setFillColor(sf::Color::Green);
+	right_section.setFillColor(sf::Color(0,158,227));
 	right_section.setPosition(width, 0);
 
 	// Setting up the sections which will show the next piece that will come
@@ -331,7 +331,7 @@ int main()
 
 
 	sf::RectangleShape next_piece_section(sf::Vector2f(next_piece_section_width, next_piece_section_height));
-	next_piece_section.setFillColor(sf::Color::Black);
+	next_piece_section.setFillColor(sf::Color(240,133,60));
 	next_piece_section.setPosition(next_piece_section_position_x, next_piece_section_position_y);
 
 	// Setup window & create first piece
@@ -424,7 +424,7 @@ int main()
 			gamespeed = 1;
 		}
 
-		window.clear(sf::Color(0, 0, 0, 0));
+		window.clear(sf::Color(240,133,60));
 
 		// Refresh the grid-array
 		for (size_t i = 0; i < ROWS; i++)
