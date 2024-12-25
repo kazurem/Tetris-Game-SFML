@@ -8,8 +8,11 @@
 typedef uint8_t byte;
 
 // 20 is the amount of rows and 12 is the amount of columns in the game.
-byte grid[20][12];
-byte colliders[20][12];
+const int ROWS = 30;
+const int COLUMNS = 20;
+
+byte grid[ROWS][COLUMNS];
+byte colliders[ROWS][COLUMNS];
 
 // Vec2 will be used to store the positions of the tetrominos pieces.
 struct Vec2
@@ -158,9 +161,9 @@ void rotate(Piece &piece, PIECE_TYPE type)
 			colliders[(byte)pcy][(byte)pcx] != 2 &&
 			colliders[(byte)pdy][(byte)pdx] != 2 &&
 
-			(pbx >= 0 && pbx <= 11 && pby >= 0 && pby <= 19) &&
-			(pcx >= 0 && pcx <= 11 && pcy >= 0 && pcy <= 19) &&
-			(pdx >= 0 && pdx <= 11 && pdy >= 0 && pdy <= 19) &&
+			(pbx >= 0 && pbx <= COLUMNS && pby >= 0 && pby <= ROWS-1) &&
+			(pcx >= 0 && pcx <= COLUMNS && pcy >= 0 && pcy <= ROWS-1) &&
+			(pdx >= 0 && pdx <= COLUMNS && pdy >= 0 && pdy <= ROWS-1) &&
 
 			piece.a.x != 1 && piece.a.y != 1)
 		{
@@ -178,68 +181,41 @@ void rotate(Piece &piece, PIECE_TYPE type)
 }
 
 //Functions to setup and display text
-void setupInstructionText(sf::Text &score, sf::Text &up_text, sf::Text &down_text, sf::Text &right_left_text, sf::Text &pause_text, sf::Font &font, sf::Text &game_over_text, sf::Text &pause_instruction_text,size_t width, size_t height)
+void setupInstructionText(sf::Text &score, sf::Text &pause_text, sf::Font &font, sf::Text &game_over_text ,int width, int height)
 {
 	font.loadFromFile("./fonts/VeniteAdoremus-rgRBA.ttf");
 
-	up_text.setFont(font);
-	down_text.setFont(font);
-	right_left_text.setFont(font);
 	score.setFont(font);
 	pause_text.setFont(font);
 	game_over_text.setFont(font);
-	pause_instruction_text.setFont(font);
 
-	up_text.setCharacterSize(8);
-	down_text.setCharacterSize(8);
-	right_left_text.setCharacterSize(8);
-	pause_instruction_text.setCharacterSize(8);
 	score.setCharacterSize(15);
 	pause_text.setCharacterSize(30);
 	game_over_text.setCharacterSize(30);
 
-	up_text.setFillColor(sf::Color::Black);
-	down_text.setFillColor(sf::Color::Black);
-	right_left_text.setFillColor(sf::Color::Black);
-	score.setFillColor(sf::Color::Blue);
+	
+	score.setFillColor(sf::Color::White);
 	pause_text.setFillColor(sf::Color::Blue);
 	game_over_text.setFillColor(sf::Color::Blue);
-	pause_instruction_text.setFillColor(sf::Color::Black);
-
-	up_text.setPosition(width+400/2 - 200, height - 300);
-	down_text.setPosition(width+400/2 - 200, height - 250);
-	right_left_text.setPosition(width+400/2 - 200, height - 170);
-	pause_instruction_text.setPosition(width+400/2 - 200, height - 100);
+	
 	score.setPosition(10, 25);
 	pause_text.setPosition(width/2  -200, height/2 - 150);
 	game_over_text.setPosition(width/2 - 110, height/2 - 150);
 
 	sf::Vector2<float> small_scale(2.5f, 2.5f);
 	sf::Vector2<float> large_scale(3.0f, 3.0f);
-	up_text.setScale(small_scale);
-	down_text.setScale(small_scale);
-	right_left_text.setScale(small_scale);
-	pause_instruction_text.setScale(small_scale);
 	score.setScale(small_scale);
 	pause_text.setScale(large_scale);
 	game_over_text.setScale(large_scale);
 
-	up_text.setString("Press UP arrow key to rotate");
-	down_text.setString("Press DOWN arrow key to move \ndown quickly");
-	right_left_text.setString("Press RIGHT/LEFT arrow keys \nto move the right/left");
 	score.setString("Line: 0");
-	pause_text.setString("Game Paused!");
 	game_over_text.setString("Game Over!");
-	pause_instruction_text.setString("Pause game by pressing P\nUnpause by pressing P again");
+	pause_text.setString("Game Paused!");
 }
 
-void displayText(sf::RenderWindow &window, sf::Text score, sf::Text up_text, sf::Text down_text, sf::Text right_left_text, sf::Text pause_text, sf::Text game_over_text, sf::Text pause_instruction_text,int game_over, int pause)
+void displayText(sf::RenderWindow &window, sf::Text score, sf::Text pause_text, sf::Text game_over_text,int game_over, int pause)
 {
 	window.draw(score);
-	window.draw(right_left_text);
-	window.draw(down_text);
-	window.draw(up_text);
-	window.draw(pause_instruction_text);
 	if(game_over == 1)
 	{
 		window.draw(game_over_text);
@@ -251,49 +227,49 @@ void displayText(sf::RenderWindow &window, sf::Text score, sf::Text up_text, sf:
 }
 
 //Drawing current falling piece and the next piece that will come
-void drawCurrentAndNext(sf::RenderWindow &window, Piece &piece, Piece &next_piece, sf::Sprite tile, float tile_size, int next_piece_section_position_x, int next_piece_section_position_y)
+void drawCurrentAndNext(sf::RenderWindow &window, Piece &piece, Piece &next_piece, sf::Sprite tile, float tile_width, float tile_height, int next_piece_section_position_x, int next_piece_section_position_y)
 {
 	sf::Sprite piece_tile = tile;
 
-	piece_tile.setPosition(tile_size * piece.a.x, tile_size * piece.a.y);
+	piece_tile.setPosition(tile_width * piece.a.x, tile_height * piece.a.y);
 	window.draw(piece_tile);
 
-	piece_tile.setPosition(tile_size * piece.b.x, tile_size * piece.b.y);
+	piece_tile.setPosition(tile_width * piece.b.x, tile_height * piece.b.y);
 	window.draw(piece_tile);
 
-	piece_tile.setPosition(tile_size * piece.c.x, tile_size * piece.c.y);
+	piece_tile.setPosition(tile_width * piece.c.x, tile_height * piece.c.y);
 	window.draw(piece_tile);
 
-	piece_tile.setPosition(tile_size * piece.d.x, tile_size * piece.d.y);
+	piece_tile.setPosition(tile_width * piece.d.x, tile_height * piece.d.y);
 	window.draw(piece_tile);
 
 	// Draw next piece
 	sf::Sprite next_piece_tile = tile;
 
-	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.a.x * tile_size - 60, next_piece_section_position_y + next_piece.a.y * tile_size + 100);
+	next_piece_tile.setPosition((next_piece_section_position_x + next_piece.a.x * tile_width)-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.a.y * tile_height + 3*tile_height);
 	window.draw(next_piece_tile);
 
-	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_size - 60, next_piece_section_position_y + next_piece.b.y * tile_size + 100);
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_width -2*(tile_width)/1.5, next_piece_section_position_y + next_piece.b.y * tile_height + 3*tile_height);
 	window.draw(next_piece_tile);
 
-	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_size - 60, next_piece_section_position_y + next_piece.c.y * tile_size + 100);
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_width-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.c.y * tile_height + 3*tile_height);
 	window.draw(next_piece_tile);
 
-	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_size - 60, next_piece_section_position_y + next_piece.d.y * tile_size + 100);
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_width-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.d.y * tile_height + 3*tile_height);
 	window.draw(next_piece_tile);
 }
 
 //Drawing tiles which are not moving
-void drawStaticTiles(sf::RenderWindow &window, sf::Sprite tile, float tile_size)
+void drawStaticTiles(sf::RenderWindow &window, sf::Sprite tile, float tile_width, float tile_height)
 {
-	for (size_t i = 0; i < 20; i++)
+	for (size_t i = 0; i < ROWS; i++)
 		{
-			for (size_t j = 0; j < 12; j++)
+			for (size_t j = 0; j < COLUMNS; j++)
 			{
 				if (colliders[i][j] == 2)
 				{
 					sf::Sprite t = tile;
-					t.setPosition(tile_size * j, tile_size * i);
+					t.setPosition(tile_width * j, tile_height * i);
 					window.draw(t);
 				}
 			}
@@ -303,7 +279,7 @@ void drawStaticTiles(sf::RenderWindow &window, sf::Sprite tile, float tile_size)
 //check game over
 void checkGameOver(int &game_over)
 {
-	for (size_t i = 0; i < 12; i++)
+	for (size_t i = 0; i < COLUMNS; i++)
 		{
 			if (colliders[0][i] == 2)
 			{
@@ -319,43 +295,50 @@ int main()
 	sf::Texture tile_tex;
 	tile_tex.loadFromFile("images/tetris_tile.png");
 
-	sf::Sprite tile(tile_tex);
-	tile.setScale(2.83, 2.83);
+	int width = 600, height = 900; //width and height of play area
 
-	float tile_size = tile_tex.getSize().x * tile.getScale().x;
-	size_t width = tile_size * 12, height = tile_size * 20;
+	sf::Sprite tile(tile_tex);
+	float x_scale = ((width/(float)COLUMNS)/tile_tex.getSize().x);
+	float y_scale= ((height/(float)ROWS)/tile_tex.getSize().y);
+	tile.setScale(x_scale,  y_scale);
+
+	float tile_width = width/COLUMNS;
+	float tile_height = height/ROWS;
+
+
 
 	// Declaring all the important textfor the game
 	sf::Text score;
 	sf::Text game_over_text;
 	sf::Text pause_text;
-	sf::Text right_left_text;
-	sf::Text down_text;
-	sf::Text up_text;
-	sf::Text pause_instruction_text;
 	sf::Font font;
 
 	// Setting score, game_over,pause text properties properties
-	setupInstructionText(score, up_text, down_text, right_left_text, pause_text, font, game_over_text, pause_instruction_text, width, height);
+	setupInstructionText(score,pause_text, font, game_over_text, width, height);
 
-	// Setup window & create first piece
-	sf::RenderWindow window(sf::VideoMode(width + 400, height), "Tetris", sf::Style::Titlebar | sf::Style::Close);
-	window.setKeyRepeatEnabled(true);
-	window.setFramerateLimit(60);
 
-	// Setting up the sections which will show the next piece that will come
-	int next_piece_section_width = 350;
-	int next_piece_section_height = 350;
-	int next_piece_section_position_x = width + 20;
-	int next_piece_section_position_y = 50;
-
-	sf::RectangleShape right_section(sf::Vector2f(400, height));
+	int right_section_width = width/1.5;
+	int right_section_height = height;
+	sf::RectangleShape right_section(sf::Vector2f(right_section_width, right_section_height));
 	right_section.setFillColor(sf::Color::Green);
 	right_section.setPosition(width, 0);
+
+	// Setting up the sections which will show the next piece that will come
+	int next_piece_section_width = right_section_width - right_section_width*0.1;
+	int next_piece_section_height = right_section_height/3;
+	int next_piece_section_position_x = width + right_section_width*0.1/2.0;
+	int next_piece_section_position_y = 50;
+
 
 	sf::RectangleShape next_piece_section(sf::Vector2f(next_piece_section_width, next_piece_section_height));
 	next_piece_section.setFillColor(sf::Color::Black);
 	next_piece_section.setPosition(next_piece_section_position_x, next_piece_section_position_y);
+
+	// Setup window & create first piece
+	sf::RenderWindow window(sf::VideoMode(width + right_section_width, height), "Tetris");
+	window.setKeyRepeatEnabled(true);
+	window.setFramerateLimit(60);
+
 
 	PIECE_TYPE piece_type = static_cast<PIECE_TYPE>((rand() % 7));
 	Piece piece = CreatePiece(piece_type);
@@ -406,7 +389,7 @@ int main()
 						  // the right arrow key is pressed
 					event.key.code == sf::Keyboard::Right &&
 					// no part of the tetromino is at the right boundary of the game
-					piece.a.x != 11 && piece.b.x != 11 && piece.c.x != 11 && piece.d.x != 11 &&
+					piece.a.x != COLUMNS-1 && piece.b.x != COLUMNS-1 && piece.c.x != COLUMNS-1 && piece.d.x != COLUMNS-1 &&
 					// There are no static tetromino(tetromino from previous rounds) on the right of any part of the tetromino
 					(colliders[piece.a.y][piece.a.x + 1]) != 2 && (colliders[piece.b.y][piece.b.x + 1]) != 2 &&
 					(colliders[piece.c.y][piece.c.x + 1]) != 2 && (colliders[piece.d.y][piece.d.x + 1]) != 2 && game_over == 0 && pause == 0)
@@ -444,9 +427,9 @@ int main()
 		window.clear(sf::Color(0, 0, 0, 0));
 
 		// Refresh the grid-array
-		for (size_t i = 0; i < 20; i++)
+		for (size_t i = 0; i < ROWS; i++)
 		{
-			for (size_t j = 0; j < 12; j++)
+			for (size_t j = 0; j < COLUMNS; j++)
 			{
 				if (colliders[i][j] == 2)
 				{
@@ -459,8 +442,7 @@ int main()
 			}
 		}
 
-		window.draw(right_section);
-		window.draw(next_piece_section);
+		
 
 		// Clock
 		if (timer > gamespeed && game_over == 0 && pause == 0)
@@ -474,7 +456,7 @@ int main()
 				grid[piece.c.y + 1][piece.c.x] == 2 ||
 				grid[piece.d.y + 1][piece.d.x] == 2 ||
 				// OR there is the bottom of the game below the falling piece
-				piece.a.y == 19 || piece.b.y == 19 || piece.c.y == 19 || piece.d.y == 19)
+				piece.a.y == ROWS-1 || piece.b.y == ROWS-1 || piece.c.y == ROWS-1 || piece.d.y == ROWS-1)
 			{
 				grid[piece.a.y][piece.a.x] = 2;
 				grid[piece.b.y][piece.b.x] = 2;
@@ -509,10 +491,10 @@ int main()
 
 			// Check if the player has a line or 'tetris'
 			byte tetris_row = 0;
-			for (size_t i = 0; i < 20; i++)
+			for (size_t i = 0; i < ROWS; i++)
 			{
 				byte blocks_in_a_row = 0;
-				for (size_t j = 0; j < 12; j++)
+				for (size_t j = 0; j < COLUMNS; j++)
 				{
 					if (colliders[i][j] == 2)
 					{
@@ -523,7 +505,7 @@ int main()
 				{
 					for (size_t k = i; k > 0; k--)
 					{
-						for (size_t l = 0; l < 12; l++)
+						for (size_t l = 0; l < COLUMNS; l++)
 						{
 							colliders[k][l] = colliders[k - 1][l];
 						}
@@ -550,15 +532,17 @@ int main()
 			timer++;
 		}
 
+		window.draw(right_section);
+		window.draw(next_piece_section);
 
 		// Draw the current falling piece
-		drawCurrentAndNext(window, piece,next_piece,tile, tile_size, next_piece_section_position_x, next_piece_section_position_y);
+		drawCurrentAndNext(window, piece,next_piece,tile, tile_width, tile_height, next_piece_section_position_x, next_piece_section_position_y);
 
 		// Draws the static tiles
-		drawStaticTiles(window, tile, tile_size);
+		drawStaticTiles(window, tile, tile_width, tile_height);
 
 		// Draw the text and finally update the window
-		displayText(window, score, up_text, down_text,right_left_text, pause_text, game_over_text, pause_instruction_text,game_over, pause);
+		displayText(window, score, pause_text, game_over_text,game_over, pause);
 		window.display();
 	}
 
