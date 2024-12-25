@@ -8,8 +8,8 @@
 typedef uint8_t byte;
 
 // 20 is the amount of rows and 12 is the amount of columns in the game.
-const int ROWS = 30;
-const int COLUMNS = 20;
+const int ROWS = 20;
+const int COLUMNS = 12;
 
 byte grid[ROWS][COLUMNS];
 byte colliders[ROWS][COLUMNS];
@@ -246,16 +246,16 @@ void drawCurrentAndNext(sf::RenderWindow &window, Piece &piece, Piece &next_piec
 	// Draw next piece
 	sf::Sprite next_piece_tile = tile;
 
-	next_piece_tile.setPosition((next_piece_section_position_x + next_piece.a.x * tile_width)-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.a.y * tile_height + 3*tile_height);
+	next_piece_tile.setPosition((next_piece_section_position_x + next_piece.a.x * tile_width)-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.a.y * tile_height + 2*tile_height);
 	window.draw(next_piece_tile);
 
-	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_width -2*(tile_width)/1.5, next_piece_section_position_y + next_piece.b.y * tile_height + 3*tile_height);
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_width -2*(tile_width)/1.5, next_piece_section_position_y + next_piece.b.y * tile_height + 2*tile_height);
 	window.draw(next_piece_tile);
 
-	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_width-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.c.y * tile_height + 3*tile_height);
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_width-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.c.y * tile_height + 2*tile_height);
 	window.draw(next_piece_tile);
 
-	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_width-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.d.y * tile_height + 3*tile_height);
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_width-2*(tile_width)/1.5, next_piece_section_position_y + next_piece.d.y * tile_height + 2*tile_height);
 	window.draw(next_piece_tile);
 }
 
@@ -501,7 +501,7 @@ int main()
 						blocks_in_a_row++;
 					}
 				}
-				if (blocks_in_a_row == 12)
+				if (blocks_in_a_row == COLUMNS)
 				{
 					for (size_t k = i; k > 0; k--)
 					{
@@ -531,6 +531,8 @@ int main()
 		{
 			timer++;
 		}
+
+	
 
 		window.draw(right_section);
 		window.draw(next_piece_section);
