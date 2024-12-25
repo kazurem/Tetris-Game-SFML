@@ -207,6 +207,81 @@ void rotate(Piece &piece, PIECE_TYPE type)
 	}
 }
 
+//Functions to setup and display text
+void setupInstructionText(sf::Text &score, sf::Text &up_text, sf::Text &down_text, sf::Text &right_left_text, sf::Text &pause_text, sf::Font &font, sf::Text &game_over_text, sf::Text &pause_instruction_text,size_t width, size_t height)
+{
+	font.loadFromFile("./fonts/VeniteAdoremus-rgRBA.ttf");
+
+	up_text.setFont(font);
+	down_text.setFont(font);
+	right_left_text.setFont(font);
+	score.setFont(font);
+	pause_text.setFont(font);
+	game_over_text.setFont(font);
+	pause_instruction_text.setFont(font);
+
+	up_text.setCharacterSize(8);
+	down_text.setCharacterSize(8);
+	right_left_text.setCharacterSize(8);
+	pause_instruction_text.setCharacterSize(8);
+	score.setCharacterSize(15);
+	pause_text.setCharacterSize(30);
+	game_over_text.setCharacterSize(30);
+
+	up_text.setFillColor(sf::Color::Black);
+	down_text.setFillColor(sf::Color::Black);
+	right_left_text.setFillColor(sf::Color::Black);
+	score.setFillColor(sf::Color::Blue);
+	pause_text.setFillColor(sf::Color::Blue);
+	game_over_text.setFillColor(sf::Color::Blue);
+	pause_instruction_text.setFillColor(sf::Color::Black);
+
+	up_text.setPosition(width+400/2 - 200, height - 300);
+	down_text.setPosition(width+400/2 - 200, height - 250);
+	right_left_text.setPosition(width+400/2 - 200, height - 170);
+	pause_instruction_text.setPosition(width+400/2 - 200, height - 100);
+	score.setPosition(10, 25);
+	pause_text.setPosition(width/2  -200, height/2 - 150);
+	game_over_text.setPosition(width/2 - 110, height/2 - 150);
+
+
+	sf::Vector2<float> small_scale(2.5f, 2.5f);
+	sf::Vector2<float> large_scale(3.0f, 3.0f);
+	up_text.setScale(small_scale);
+	down_text.setScale(small_scale);
+	right_left_text.setScale(small_scale);
+	pause_instruction_text.setScale(small_scale);
+	score.setScale(small_scale);
+	pause_text.setScale(large_scale);
+	game_over_text.setScale(large_scale);
+
+	up_text.setString("Press UP arrow key to rotate");
+	down_text.setString("Press DOWN arrow key to move \ndown quickly");
+	right_left_text.setString("Press RIGHT/LEFT arrow keys \nto move the right/left");
+	score.setString("Line: 0");
+	pause_text.setString("Game Paused!");
+	game_over_text.setString("Game Over!");
+	pause_instruction_text.setString("Pause game by pressing P\nUnpause by pressing P again");
+}
+
+void displayText(sf::RenderWindow &window, sf::Text score, sf::Text up_text, sf::Text down_text, sf::Text right_left_text, sf::Text pause_text, sf::Text game_over_text, sf::Text pause_instruction_text,int game_over, int pause)
+{
+	window.draw(score);
+	window.draw(right_left_text);
+	window.draw(down_text);
+	window.draw(up_text);
+	window.draw(pause_instruction_text);
+	if(game_over == 1)
+	{
+		window.draw(game_over_text);
+	}
+	else if(pause == 1)
+	{
+		window.draw(pause_text);
+	}
+}
+
+
 int main()
 {
 
@@ -228,17 +303,20 @@ int main()
 
 	// Setup score counter
 	sf::Text score;
+	sf::Text game_over_text;
+	sf::Text pause_text;
+	sf::Text right_left_text;
+	sf::Text down_text;
+	sf::Text up_text;
+	sf::Text pause_instruction_text;
 	sf::Font font;
 
-	// Setting score properties
-	font.loadFromFile("./fonts/Roboto-Black.ttf");
-	score.setFont(font);
-	score.setCharacterSize(15);
-	score.setFillColor(sf::Color::Blue);
-	score.setPosition(10, 25);
-	sf::Vector2<float> score_scale(2.0f, 2.0f);
-	score.setScale(score_scale);
-	score.setString("Lines: 0");
+	// Setting score, game_over,pause text properties properties
+	setupInstructionText(score, up_text, down_text, right_left_text, pause_text, font, game_over_text, pause_instruction_text, width, height);
+
+
+	int game_over = 0;
+	int pause = 0;
 
 	// Setup window & create first piece
 	sf::RenderWindow window(sf::VideoMode(width + 400, height), "Tetris", sf::Style::Titlebar | sf::Style::Close);
@@ -264,7 +342,8 @@ int main()
 	PIECE_TYPE next_piece_type = static_cast<PIECE_TYPE>((rand() % 7));
 	Piece next_piece = CreatePiece(next_piece_type);
 
-	unsigned int timer = 0, gamespeed = 10, scoreCounter = 0;
+	unsigned int timer = 0, scoreCounter = 0;
+	float gamespeed = 20;
 
 	while (window.isOpen())
 	{
@@ -281,7 +360,7 @@ int main()
 			{
 				// Movement of the tetromino
 				// Rotate the tetromino if UP arrow key is pressed
-				if (event.key.code == sf::Keyboard::Up)
+				if (event.key.code == sf::Keyboard::Up && game_over == 0 && pause == 0)
 				{
 					rotate(piece, piece_type);
 				}
@@ -292,8 +371,10 @@ int main()
 					piece.a.x != 0 && piece.b.x != 0 && piece.c.x != 0 && piece.d.x != 0 &&
 					// There are no static tetromino(tetromino from previous rounds) on the left of any part of the tetromino
 					(colliders[piece.a.y][piece.a.x - 1]) != 2 && (colliders[piece.b.y][piece.b.x - 1]) != 2 &&
-					(colliders[piece.c.y][piece.c.x - 1]) != 2 && (colliders[piece.d.y][piece.d.x - 1]) != 2)
+					(colliders[piece.c.y][piece.c.x - 1]) != 2 && (colliders[piece.d.y][piece.d.x - 1]) != 2 && game_over == 0 && pause == 0 )
+					
 				{
+
 					piece.a.x--;
 					piece.b.x--;
 					piece.c.x--;
@@ -306,12 +387,23 @@ int main()
 					piece.a.x != 11 && piece.b.x != 11 && piece.c.x != 11 && piece.d.x != 11 &&
 					// There are no static tetromino(tetromino from previous rounds) on the right of any part of the tetromino
 					(colliders[piece.a.y][piece.a.x + 1]) != 2 && (colliders[piece.b.y][piece.b.x + 1]) != 2 &&
-					(colliders[piece.c.y][piece.c.x + 1]) != 2 && (colliders[piece.d.y][piece.d.x + 1]) != 2)
+					(colliders[piece.c.y][piece.c.x + 1]) != 2 && (colliders[piece.d.y][piece.d.x + 1]) != 2 && game_over == 0 && pause == 0)
 				{
 					piece.a.x++;
 					piece.b.x++;
 					piece.c.x++;
 					piece.d.x++;
+				}
+				else if(event.key.code == sf::Keyboard::P)
+				{
+					if(pause == 0)
+					{
+						pause = 1;
+					}
+					else
+					{
+						pause = 0;
+					}
 				}
 			}
 			// Increasing the magnitude of the gamespeed variables decreases the speed of the game
@@ -327,7 +419,7 @@ int main()
 			gamespeed = 1;
 		}
 
-		window.clear(sf::Color(0, 0, 0, 1));
+		window.clear(sf::Color(0, 0, 0, 0));
 
 		// Refresh the grid-array
 		for (size_t i = 0; i < 20; i++)
@@ -364,7 +456,7 @@ int main()
 		window.draw(next_piece_tile);
 
 		// Clock
-		if (timer > gamespeed)
+		if (timer > gamespeed && game_over == 0 && pause == 0)
 		{
 			// Collision checks
 			if ( // IF there are static tetrominoes below the falling piece
@@ -424,6 +516,10 @@ int main()
 						{
 							colliders[k][l] = colliders[k - 1][l];
 						}
+						if(gamespeed > 5)
+						{
+							gamespeed -= 1;
+						}
 					}
 					scoreCounter++;
 					score.setString("Line: " + std::to_string(scoreCounter));
@@ -435,7 +531,7 @@ int main()
 			{
 				if (colliders[0][i] == 2)
 				{
-					window.close();
+					game_over = 1;
 				}
 			}
 
@@ -457,6 +553,11 @@ int main()
 			timer++;
 		}
 
+
+
+		
+
+
 		// Draw the current falling piece
 		sf::Sprite piece_tile = tile;
 
@@ -473,11 +574,12 @@ int main()
 		window.draw(piece_tile);
 
 		// Draws the static tiles
+		
 		for (size_t i = 0; i < 20; i++)
 		{
 			for (size_t j = 0; j < 12; j++)
 			{
-				if (colliders[i][j] == 2)
+				if (colliders[i][j] == 2 || grid[i][j] == 1)
 				{
 					sf::Sprite t = tile;
 					t.setPosition(tile_size * j, tile_size * i);
@@ -487,7 +589,7 @@ int main()
 		}
 
 		// Draw the score and finally update the window
-		window.draw(score);
+		displayText(window, score, up_text, down_text,right_left_text, pause_text, game_over_text, pause_instruction_text,game_over, pause);
 		window.display();
 	}
 
