@@ -348,21 +348,7 @@ int main()
 		window.draw(right_section);
 		window.draw(next_piece_section);
 
-		// Draw next piece
-		sf::Sprite next_piece_tile = tile;
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.a.x * tile_size - 60, next_piece_section_position_y + next_piece.a.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_size - 60, next_piece_section_position_y + next_piece.b.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_size - 60, next_piece_section_position_y + next_piece.c.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_size - 60, next_piece_section_position_y + next_piece.d.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
+		
 		// Clock
 		if (timer > gamespeed)
 		{
@@ -456,6 +442,22 @@ int main()
 		{
 			timer++;
 		}
+
+		// Draw next piece
+		sf::Sprite next_piece_tile = tile;
+
+		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.a.x * tile_size - 60, next_piece_section_position_y + next_piece.a.y * tile_size + 100);
+		window.draw(next_piece_tile);
+
+		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_size - 60, next_piece_section_position_y + next_piece.b.y * tile_size + 100);
+		window.draw(next_piece_tile);
+
+		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_size - 60, next_piece_section_position_y + next_piece.c.y * tile_size + 100);
+		window.draw(next_piece_tile);
+
+		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_size - 60, next_piece_section_position_y + next_piece.d.y * tile_size + 100);
+		window.draw(next_piece_tile);
+
 
 		// Draw the current falling piece
 		sf::Sprite piece_tile = tile;
