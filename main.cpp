@@ -161,9 +161,9 @@ void rotate(Piece &piece, PIECE_TYPE type)
 			colliders[(byte)pcy][(byte)pcx] != 2 &&
 			colliders[(byte)pdy][(byte)pdx] != 2 &&
 
-			(pbx >= 0 && pbx <= COLUMNS && pby >= 0 && pby <= ROWS-1) &&
-			(pcx >= 0 && pcx <= COLUMNS && pcy >= 0 && pcy <= ROWS-1) &&
-			(pdx >= 0 && pdx <= COLUMNS && pdy >= 0 && pdy <= ROWS-1) &&
+			(pbx >= 0 && pbx <= COLUMNS-1 && pby >= 0 && pby <= ROWS-1) &&
+			(pcx >= 0 && pcx <= COLUMNS-1 && pcy >= 0 && pcy <= ROWS-1) &&
+			(pdx >= 0 && pdx <= COLUMNS-1 && pdy >= 0 && pdy <= ROWS-1) &&
 
 			piece.a.x != 1 && piece.a.y != 1)
 		{
