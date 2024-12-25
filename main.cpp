@@ -3,43 +3,13 @@
 #include <cstdio>
 #include <iostream>
 
-/*
-#define is a macro. A macro is a preprocessor directive, meaning that it is dealt with before the compilation.
-During preprocessing, macros are replaced with their corresponding values.
-Wherever there is the word PI in the code, it gets replaced with 3.14159265359.
-*/
 #define PI 3.14159265359
 
-/*
-Typedef:
-typedef keyword in C++ is used for aliasing existing data types.
-typedef is limited to giving symbolic names to types only, whereas #define can be used to define an alias for values as well.
-*/
-/*
-uint8_t:
-1. unsigned 8 bit integer (u --> unsigned, int--> integer, 8--> 8bits, t--> type)
-why use these?
-Because they are not platform dependent. The sizes of int, long etc ate different on different platforms.
-uintN_t gives a integer of size N bits no matter what the platform is.
-*/
-typedef uint8_t byte; // now by writing byte, you are basically writing uint8_t.
-
-/*
-Difference between typedef and #define:
-1. #define is a instruction for the preprocessor. it gets executed by the preprocessor. While typedef is handled by the compiler.
-2. #define can alias values as well while typedef is limited to data types
-*/
+typedef uint8_t byte;
 
 // 20 is the amount of rows and 12 is the amount of columns in the game.
 byte grid[20][12];
-byte colliders[20][12]; // two arrays?
-
-/*
-Structures (also called structs) are a way to group several related variables into one place. Each variable in the structure is known as a member of the structure.
-Unlike Arrays, they can store multiple data types.
-you can access members of the struct using the dot notation. (myStruct.member1)
-To declare a variable that is a struct:  myStructName var;
-*/
+byte colliders[20][12];
 
 // Vec2 will be used to store the positions of the tetrominos pieces.
 struct Vec2
@@ -128,7 +98,7 @@ Piece CreatePiece(PIECE_TYPE type)
 	}
 }
 
-// takes in a tetromino returns the rotated it's rotated version
+// takes in a tetromino returns the it's rotated version
 void rotate(Piece &piece, PIECE_TYPE type)
 {
 	if (type == I) // Special handling for the I piece
@@ -244,7 +214,6 @@ void setupInstructionText(sf::Text &score, sf::Text &up_text, sf::Text &down_tex
 	pause_text.setPosition(width/2  -200, height/2 - 150);
 	game_over_text.setPosition(width/2 - 110, height/2 - 150);
 
-
 	sf::Vector2<float> small_scale(2.5f, 2.5f);
 	sf::Vector2<float> large_scale(3.0f, 3.0f);
 	up_text.setScale(small_scale);
@@ -281,27 +250,82 @@ void displayText(sf::RenderWindow &window, sf::Text score, sf::Text up_text, sf:
 	}
 }
 
+//Drawing current falling piece and the next piece that will come
+void drawCurrentAndNext(sf::RenderWindow &window, Piece &piece, Piece &next_piece, sf::Sprite tile, float tile_size, int next_piece_section_position_x, int next_piece_section_position_y)
+{
+	sf::Sprite piece_tile = tile;
+
+	piece_tile.setPosition(tile_size * piece.a.x, tile_size * piece.a.y);
+	window.draw(piece_tile);
+
+	piece_tile.setPosition(tile_size * piece.b.x, tile_size * piece.b.y);
+	window.draw(piece_tile);
+
+	piece_tile.setPosition(tile_size * piece.c.x, tile_size * piece.c.y);
+	window.draw(piece_tile);
+
+	piece_tile.setPosition(tile_size * piece.d.x, tile_size * piece.d.y);
+	window.draw(piece_tile);
+
+	// Draw next piece
+	sf::Sprite next_piece_tile = tile;
+
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.a.x * tile_size - 60, next_piece_section_position_y + next_piece.a.y * tile_size + 100);
+	window.draw(next_piece_tile);
+
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_size - 60, next_piece_section_position_y + next_piece.b.y * tile_size + 100);
+	window.draw(next_piece_tile);
+
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_size - 60, next_piece_section_position_y + next_piece.c.y * tile_size + 100);
+	window.draw(next_piece_tile);
+
+	next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_size - 60, next_piece_section_position_y + next_piece.d.y * tile_size + 100);
+	window.draw(next_piece_tile);
+}
+
+//Drawing tiles which are not moving
+void drawStaticTiles(sf::RenderWindow &window, sf::Sprite tile, float tile_size)
+{
+	for (size_t i = 0; i < 20; i++)
+		{
+			for (size_t j = 0; j < 12; j++)
+			{
+				if (colliders[i][j] == 2)
+				{
+					sf::Sprite t = tile;
+					t.setPosition(tile_size * j, tile_size * i);
+					window.draw(t);
+				}
+			}
+		}
+}
+
+//check game over
+void checkGameOver(int &game_over)
+{
+	for (size_t i = 0; i < 12; i++)
+		{
+			if (colliders[0][i] == 2)
+			{
+				game_over = 1;
+			}
+		}
+}
 
 int main()
 {
-
 	srand(time(NULL)); // setting a seed
-	// 16x16 tiles
-	// Loading texture from a file
-	// What is a texture?
+
 	sf::Texture tile_tex;
 	tile_tex.loadFromFile("images/tetris_tile.png");
 
-	// Creating a Sprite of texture "tile_tex"
-	// what is a sprite?
 	sf::Sprite tile(tile_tex);
 	tile.setScale(2.83, 2.83);
 
-	// what on EARTH is happening here?!!
 	float tile_size = tile_tex.getSize().x * tile.getScale().x;
 	size_t width = tile_size * 12, height = tile_size * 20;
 
-	// Setup score counter
+	// Declaring all the important textfor the game
 	sf::Text score;
 	sf::Text game_over_text;
 	sf::Text pause_text;
@@ -314,10 +338,6 @@ int main()
 	// Setting score, game_over,pause text properties properties
 	setupInstructionText(score, up_text, down_text, right_left_text, pause_text, font, game_over_text, pause_instruction_text, width, height);
 
-
-	int game_over = 0;
-	int pause = 0;
-
 	// Setup window & create first piece
 	sf::RenderWindow window(sf::VideoMode(width + 400, height), "Tetris", sf::Style::Titlebar | sf::Style::Close);
 	window.setKeyRepeatEnabled(true);
@@ -325,7 +345,7 @@ int main()
 
 	// Setting up the sections which will show the next piece that will come
 	int next_piece_section_width = 350;
-	int next_piece_section_height = 200;
+	int next_piece_section_height = 350;
 	int next_piece_section_position_x = width + 20;
 	int next_piece_section_position_y = 50;
 
@@ -333,7 +353,7 @@ int main()
 	right_section.setFillColor(sf::Color::Green);
 	right_section.setPosition(width, 0);
 
-	sf::RectangleShape next_piece_section(sf::Vector2f(next_piece_section_width, next_piece_section_width));
+	sf::RectangleShape next_piece_section(sf::Vector2f(next_piece_section_width, next_piece_section_height));
 	next_piece_section.setFillColor(sf::Color::Black);
 	next_piece_section.setPosition(next_piece_section_position_x, next_piece_section_position_y);
 
@@ -342,12 +362,14 @@ int main()
 	PIECE_TYPE next_piece_type = static_cast<PIECE_TYPE>((rand() % 7));
 	Piece next_piece = CreatePiece(next_piece_type);
 
+	//important variables for the game logic
 	unsigned int timer = 0, scoreCounter = 0;
 	float gamespeed = 20;
+	float gamespeed_changing = 20;
+	int game_over = 0, pause = 0;
 
 	while (window.isOpen())
 	{
-
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
@@ -409,7 +431,7 @@ int main()
 			// Increasing the magnitude of the gamespeed variables decreases the speed of the game
 			if (event.type == sf::Event::KeyReleased)
 			{
-				gamespeed = 20;
+				gamespeed = gamespeed_changing;
 			}
 		}
 
@@ -440,24 +462,11 @@ int main()
 		window.draw(right_section);
 		window.draw(next_piece_section);
 
-		// Draw next piece
-		sf::Sprite next_piece_tile = tile;
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.a.x * tile_size - 60, next_piece_section_position_y + next_piece.a.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.b.x * tile_size - 60, next_piece_section_position_y + next_piece.b.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.c.x * tile_size - 60, next_piece_section_position_y + next_piece.c.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
-		next_piece_tile.setPosition(next_piece_section_position_x + next_piece.d.x * tile_size - 60, next_piece_section_position_y + next_piece.d.y * tile_size + 100);
-		window.draw(next_piece_tile);
-
 		// Clock
 		if (timer > gamespeed && game_over == 0 && pause == 0)
 		{
+
+
 			// Collision checks
 			if ( // IF there are static tetrominoes below the falling piece
 				grid[piece.a.y + 1][piece.a.x] == 2 ||
@@ -496,6 +505,8 @@ int main()
 				piece.d.y++;
 			}
 
+
+
 			// Check if the player has a line or 'tetris'
 			byte tetris_row = 0;
 			for (size_t i = 0; i < 20; i++)
@@ -516,37 +527,23 @@ int main()
 						{
 							colliders[k][l] = colliders[k - 1][l];
 						}
-						if(gamespeed > 5)
-						{
-							gamespeed -= 1;
-						}
+						
+					}
+					if(gamespeed_changing > 5)
+					{
+						gamespeed_changing -= 2;
 					}
 					scoreCounter++;
 					score.setString("Line: " + std::to_string(scoreCounter));
 				}
 			}
 
-			// If game over, then close application
-			for (size_t i = 0; i < 12; i++)
-			{
-				if (colliders[0][i] == 2)
-				{
-					game_over = 1;
-				}
-			}
-
+			
+			// check game over
+			checkGameOver(game_over);
+			
+			//reset timer
 			timer = 0;
-
-			// Prints out the grid in the console (if enabled) for testing purposes
-			for (size_t i = 0; i < 20; i++)
-			{
-				for (size_t j = 0; j < 12; j++)
-				{
-					printf("%i", grid[i][j]);
-					std::cout << grid[i][j] << " ";
-				}
-				std::cout << "\n";
-			}
 		}
 		else
 		{
@@ -554,41 +551,13 @@ int main()
 		}
 
 
-
-		
-
-
 		// Draw the current falling piece
-		sf::Sprite piece_tile = tile;
-
-		piece_tile.setPosition(tile_size * piece.a.x, tile_size * piece.a.y);
-		window.draw(piece_tile);
-
-		piece_tile.setPosition(tile_size * piece.b.x, tile_size * piece.b.y);
-		window.draw(piece_tile);
-
-		piece_tile.setPosition(tile_size * piece.c.x, tile_size * piece.c.y);
-		window.draw(piece_tile);
-
-		piece_tile.setPosition(tile_size * piece.d.x, tile_size * piece.d.y);
-		window.draw(piece_tile);
+		drawCurrentAndNext(window, piece,next_piece,tile, tile_size, next_piece_section_position_x, next_piece_section_position_y);
 
 		// Draws the static tiles
-		
-		for (size_t i = 0; i < 20; i++)
-		{
-			for (size_t j = 0; j < 12; j++)
-			{
-				if (colliders[i][j] == 2 || grid[i][j] == 1)
-				{
-					sf::Sprite t = tile;
-					t.setPosition(tile_size * j, tile_size * i);
-					window.draw(t);
-				}
-			}
-		}
+		drawStaticTiles(window, tile, tile_size);
 
-		// Draw the score and finally update the window
+		// Draw the text and finally update the window
 		displayText(window, score, up_text, down_text,right_left_text, pause_text, game_over_text, pause_instruction_text,game_over, pause);
 		window.display();
 	}
