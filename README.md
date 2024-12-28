@@ -13,7 +13,7 @@ I used code from another git repository and modified it. The repository I cloned
 4. Changed Forwa font to Roboto.
 
 ### Game Picture:
-![Tetris Game](./images/game-picture/image-1.png)
+![Tetris Game]((./readme_picture/image.png))
 
 ### How to run?
 #### 1. Using bash in Linux:
