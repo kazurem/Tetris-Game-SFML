@@ -104,32 +104,43 @@ Piece CreatePiece(PIECE_TYPE type)
 // takes in a tetromino returns the it's rotated version
 void rotate(Piece &piece, PIECE_TYPE type)
 {
+	int pbx, pby, pcx, pcy, pdx, pdy;
 	if (type == I) // Special handling for the I piece
 	{
 		static bool vertical = false;
-		std::cout << "TRUE" << std::endl;
 
 		if (vertical)
 		{
-			// Vertical to Horizontal (Rotated 90 degrees)
-			piece.b.x = piece.a.x - 1;
-			piece.b.y = piece.a.y;
-			piece.c.x = piece.a.x + 1;
-			piece.c.y = piece.a.y;
-			piece.d.x = piece.a.x + 2;
-			piece.d.y = piece.a.y;
+			// Vertical to Horizontal
+			pbx = piece.a.x - 1;
+			pby = piece.a.y;
+			pcx = piece.a.x + 1;
+			pcy = piece.a.y;
+			pdx = piece.a.x + 2;
+			pdy = piece.a.y;
 		}
 		else
 		{
-			// Horizontal to Vertical (Back to original position)
-			piece.b.x = piece.a.x;
-			piece.b.y = piece.a.y - 1;
-			piece.c.x = piece.a.x;
-			piece.c.y = piece.a.y + 1;
-			piece.d.x = piece.a.x;
-			piece.d.y = piece.a.y + 2;
+			// Horizontal to Vertical
+			pbx = piece.a.x;
+			pby = piece.a.y - 1;
+			pcx = piece.a.x;
+			pcy = piece.a.y + 1;
+			pdx = piece.a.x;
+			pdy = piece.a.y + 2;
 		}
-		vertical = !vertical;
+		if((pbx >= 0 && pbx <= 11) && (pcx >= 0 && pcx <= 11) && (pdx >= 0 && pdx <= 11))
+		{
+			piece.b.x = pbx; piece.b.y = pby;
+			piece.c.x = pcx; piece.c.y = pcy;
+			piece.d.x = pdx; piece.d.y = pdy;
+			vertical = !vertical;
+		}
+		
+	}
+	else if(type == SQR)
+	{
+		
 	}
 	else
 	{
