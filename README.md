@@ -11,6 +11,10 @@ I used code from another git repository and modified it. The repository I cloned
 2. Improved rotation of blocks.
 3. Added a Game Over fucntionality instead of the game just closing.
 4. Changed Forwa font to Roboto.
+5. Ability to change the size of the grid. The grid and the pieces will resize accordingly to fit the window size.
+6. Pausing the game by pressing P.
+7. A Proper Game Over.
+8. The falling speed increases as you score more points.
 
 ### Game Picture:
 ![Tetris Game](readme_picture/image.png)
